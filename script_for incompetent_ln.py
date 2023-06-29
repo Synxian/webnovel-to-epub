@@ -3,53 +3,43 @@ from bs4 import BeautifulSoup
 from ebooklib import epub
 import re
 #============================================variables=============================================#
-TITLE = 'The girl who betrayed me reigns in the top caste at my high school - vol 06' #book title
-chapter = 'https://soafp.com/soafps/the-girl-who-betrayed-me/chapter-36-stagnation/' #first chapter link # pylint:disable=invalid-name
-STARTING_CHAP = 36
-TOTAL_CHAPTERS = 42
-FILE_TITLE = 'The girl who betrayed me - vol 06'+'.epub' #title of the resulting epub
-CONTENT_CLASS = ['entry-content'] #div where the reading content is at, if chapter title is included, remove the following lines # pylint:disable=line-too-long
+TITLE = 'I was said to be incompetent at home, but it seems that I was super-competent globally - volume 01' #book title
+chapter = 'https://sdslntranslations.blogspot.com/2020/04/chapterstory-1-thus-i-left-home-yet.html' #first chapter link # pylint:disable=invalid-name
+TOTAL_CHAPTERS = 3 #total chapters (use final chap+1)
+FILE_TITLE = 'placeholder.epub' #title of the resulting epub
+CONTENT_CLASS = ['post-body-container', 'post-body entry-content float-container'] #div where the reading content is at, if chapter title is included, remove the following lines # pylint:disable=line-too-long
 TOC = []
 #==================================================================================================#
 
 def sanitize_content(content):
-    for i in content.find_all('div'):
+    for i in content.find_all('div', style='text-align: center;'):
         i.decompose()
     for i in content.find_all('span'):
         i.decompose()
 
-def next_chapter(soup):
-    return soup.find("div", class_='nav-next').find('a', href=True)['href']
-
-def replace_hr(content):
-    for i in content.find('hr'):
-        aux = soup.new_tag('hr')
-        i.insert_after(aux)
-        i.unwrap()
-
-def remove_translator(content):
-    if 'Translator:' in content.p.string:
-        content.p.decompose()
-
+def next_chapter(content):
+    for i in content.find_all('a'):
+        if re.search(r'(next|Next)', i.get_text()):
+            return i['href']
+     
 book = epub.EpubBook()
 
 chapters={}
+
 book.set_title(TITLE)
 
-for i in range(STARTING_CHAP, TOTAL_CHAPTERS+1):
+for i in range(1,TOTAL_CHAPTERS):
     response = requests.get(chapter)
     soup = BeautifulSoup(response.content, "html.parser")
 
-    chapter_content = soup.find('div', CONTENT_CLASS[0]) #div where the reading content is at, if chapter title is included, remove the following lines # pylint:disable=line-too-long
-    chapter = next_chapter(soup) #function to find next chapter url
-    remove_translator(chapter_content)
+    chapter_content = soup.find("div", class_=CONTENT_CLASS[0]).find("div", class_=CONTENT_CLASS[1]) #div where the reading content is at, if chapter title is included, remove the following lines # pylint:disable=line-too-long
+    chapter = next_chapter(chapter_content) #function to find next chapter url
     sanitize_content(chapter_content)
-    replace_hr(chapter_content)
-    chapter_title = soup.find('header', 'entry-header').find(class_='entry-title').string #function to find chapter title # pylint:disable=line-too-long
+    chapter_title = soup.title.string #function to find chapter title
     title_html = "<h1>"+chapter_title+"</h1>"
     chapter_content = chapter_content.renderContents()
     chapters[f"c{i}"] = epub.EpubHtml(title=title_html, file_name=f'chap_{i}.xhtml', lang='hr')
-    chapters[f"c{i}"].content = bytes(title_html, "utf-8") + chapter_content
+    chapters[f"c{i}"].content = bytes(title_html, "utf-8")+chapter_content
 
     # add chapter
     book.add_item(chapters[f"c{i}"])
