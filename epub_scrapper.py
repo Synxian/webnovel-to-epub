@@ -6,13 +6,13 @@ from constants import DEFAULT_STYLE
 
 class EpubScrapper:
     def __init__(self, title, starting_chapter_link, starting_chapter_number:int,
-                  ending_chapter_number:int, file_title, content_class:list,
+                  ending_chapter_number:int, file_name, content_class:list,
                   chapter_title_function, sanitizing_function, language=None, author:list=None,
-                  cover_link=None, style=DEFAULT_STYLE, add_images=False):
+                  cover_link=None, style=DEFAULT_STYLE, add_images=False, extra_funcs:list=None):
         self.title = title
         self.starting_chapter_number = starting_chapter_number
         self.ending_chapter_number = ending_chapter_number
-        self.file_title = f'{file_title}.epub'
+        self.file_name = f'{file_name}.epub'
         self.content_class = content_class
         self.table_of_contents = []
         self.chapters = {}
@@ -22,6 +22,7 @@ class EpubScrapper:
         self.chapter_title_function = chapter_title_function
         self.sanitizing_function = sanitizing_function
         self.add_images = add_images
+        self.extra_funcs = extra_funcs
         self.book = epub.EpubBook()
 
         self.initialize_epub()
@@ -45,7 +46,7 @@ class EpubScrapper:
         # basic spine
         self.book.spine = spine
         self.book.toc = tuple(self.table_of_contents)
-        epub.write_epub(self.file_title, self.book, {})
+        epub.write_epub(self.file_name, self.book, {})
 
     def initialize_epub(self):
         self.book.set_title(self.title)
@@ -72,6 +73,9 @@ class EpubScrapper:
             next_chapter = self.next_chapter(chapter_content)
             self.sanitize_content(chapter_content)
             chapter_title = self.get_chapter_title(soup)
+            if self.extra_funcs:
+                for func in self.extra_funcs:
+                    func(chapter_content)
             title_html = "<h1>"+chapter_title+"</h1>"
             chapter_content = chapter_content.renderContents()
             self.chapters[f"c{i}"] = epub.EpubHtml(
