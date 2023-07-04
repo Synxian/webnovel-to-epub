@@ -69,9 +69,9 @@ class EpubScrapper:
             response = requests.get(chapter, timeout=5)
             soup = BeautifulSoup(response.content, "html.parser")
             chapter_content = self.get_chapter_content(soup)
-            self.sanitize_content(soup)
-            chapter_title = self.get_chapter_title(soup)
             next_chapter = self.next_chapter(chapter_content)
+            self.sanitize_content(chapter_content)
+            chapter_title = self.get_chapter_title(soup)
             title_html = "<h1>"+chapter_title+"</h1>"
             chapter_content = chapter_content.renderContents()
             self.chapters[f"c{i}"] = epub.EpubHtml(
