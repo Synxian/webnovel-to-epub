@@ -16,6 +16,7 @@
 1. style: the css for the epub, default css from the yumemiru danshi epubs by PT Scans
 1. add_images: Bool (default False), set to True if you want to add paragraph embeded images
 1. extra_funcs: List with additional (in_place) functions for content cleansing
+1. next_chapter_function: Function with the method to obtain the next chapter link, almost always is the same (refer to any example but sdsln) -almost-
 
 For more information about language parameter refer to: http://www.ietf.org/rfc/rfc4646.txt
 
