@@ -1,7 +1,12 @@
 DEFAULT_STYLE = '''
-a {
+body {
+  line-height: 1.2em;
+  font-size: 1em;
+  overflow-wrap: break-word;
+}
+
+a:link {
   color: inherit;
-  -webkit-text-fill-color: inherit;
 }
 
 img {
@@ -15,7 +20,7 @@ img {
 h1 {
   text-indent: 0;
   font-size: 2em;
-  font-weight: bold;
+  font-weight: 200;
   line-height: 150%;
   text-align: center;
 }
