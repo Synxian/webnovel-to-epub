@@ -1,12 +1,13 @@
 DEFAULT_STYLE = '''
 body {
+  font-family: "PT Sans", sans-serif;
   line-height: 1.2em;
   font-size: 1em;
   overflow-wrap: break-word;
 }
 
 a:link {
-  color: inherit;
+  color: black;
 }
 
 img {

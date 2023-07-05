@@ -29,15 +29,16 @@ class EpubScrapper:
         self.scrap(starting_chapter_link)
 
 
-        nav_css = epub.EpubItem(
-            uid="style_nav", file_name="style/nav.css", media_type="text/css", content=style,
+        default_css = epub.EpubItem(
+            uid="style_default", file_name="style/default.css", media_type="text/css", content=style
         )
 
         # add CSS file
-        self.book.add_item(nav_css)
+        self.book.add_item(default_css)
 
         spine = ['nav']
         for i in self.chapters.values():
+            i.add_item(default_css)
             spine.append(i)
 
         # basic spine
@@ -45,8 +46,10 @@ class EpubScrapper:
         self.book.toc = tuple(self.table_of_contents)
 
         # add default NCX and Nav file
+        epub_nav = epub.EpubNav()
+        epub_nav.add_item(default_css)
+        self.book.add_item(epub_nav)
         self.book.add_item(epub.EpubNcx())
-        self.book.add_item(epub.EpubNav())
         epub.write_epub(self.file_name, self.book, {})
 
     def initialize_epub(self):
