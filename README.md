@@ -14,7 +14,7 @@
 1. author: List with the author or authors of the text.
 1. cover_link: Link to the desired cover image.
 1. style: the css for the epub, default css from the yumemiru danshi epubs by PT Scans
-1. add_images: TBD
+1. add_images: Bool (default False), set to True if you want to add paragraph embeded images
 1. extra_funcs: List with additional (in_place) functions for content cleansing
 
 For more information about language parameter refer to: http://www.ietf.org/rfc/rfc4646.txt
