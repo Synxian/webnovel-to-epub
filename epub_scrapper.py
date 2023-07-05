@@ -1,3 +1,4 @@
+import os
 import re
 import requests
 from bs4 import BeautifulSoup
@@ -66,8 +67,11 @@ class EpubScrapper:
             self.add_cover(self.cover_link)
 
     def add_cover(self, link):
-        cover = None
-        self.book.set_cover('cover.jpg', cover)
+        cover = requests.get(link, timeout=5).content
+        with open('cover.jpg', 'wb') as handler:
+            handler.write(cover)
+        self.book.set_cover('cover.jpg', open('cover.jpg', 'rb').read())
+        os.remove('cover.jpg')
 
     def scrap(self, chapter):
         for i in range(self.starting_chapter_number, self.ending_chapter_number+1):
