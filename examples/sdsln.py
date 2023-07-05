@@ -4,7 +4,7 @@ sys.path.append('..')
 from epub_scrapper import EpubScrapper #pylint: disable=c0413
 
 def sanitize_content(content):
-    for i in content.find_all('div'):
+    for i in content.find_all('div', style='text-align: center;'):
         if i.find('img') and i.find('img').get('src')[0:4] == 'epub':
             i.replace_with(i.find('img'))
         else:
@@ -13,26 +13,18 @@ def sanitize_content(content):
         i.decompose()
 
 def chapter_title(soup):
-    return soup.title.string[soup.title.string.find('Chapter'):soup.title.string.find('CClaw')-3]
-
-def remove_discord(content):
-    if 'Join the discord server' in content.p.get_text():
-        content.p.decompose()
-
+    return soup.title.string
 
 args = {
     'title': 'some title',
     'starting_chapter_link': 'link',
-    'starting_chapter_number': 0,
-    'ending_chapter_number': 0,
+    'starting_chapter_number': 1,
+    'ending_chapter_number': 1,
     'file_name': 'some file name',
-    'content_class': ['entry-content'],
+    'content_class': ['post-body-container', 'post-body entry-content float-container'],
     'chapter_title_function': chapter_title,
     'sanitizing_function': sanitize_content,
     'language': 'en',
-    'add_images': 'Bool',
-    'cover_link': 'link',
-    'extra_funcs': [remove_discord]
 }
 
 EpubScrapper(**args)
