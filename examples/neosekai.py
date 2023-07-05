@@ -20,7 +20,7 @@ def next_chapter(soup):
 
 args = {
     'title': 'some title',
-    'starting_chapter_link': 'https://www.neosekaitranslations.com/novel/since-ive-entered-the-world-of-romantic-comedy-manga-ill-do-my-best-to-make-the-heroine-who-doesnt-stick-with-the-hero-happy/chapter-1-reincarnating-as-a-manga-character/',
+    'starting_chapter_link': 'link',
     'starting_chapter_number': 1,
     'ending_chapter_number': 2,
     'file_name': 'some file name',
