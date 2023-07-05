@@ -22,7 +22,7 @@ class EpubScrapper:
         self.cover_link = cover_link
         self.chapter_title_function = chapter_title_function
         self.sanitizing_function = sanitizing_function
-        self.add_images = add_images
+        self.image_number = 1 if add_images else add_images
         self.extra_funcs = extra_funcs
         self.book = epub.EpubBook()
 
@@ -79,11 +79,15 @@ class EpubScrapper:
             soup = BeautifulSoup(response.content, "html.parser")
             chapter_content = self.get_chapter_content(soup)
             next_chapter = self.next_chapter(chapter_content)
+            if self.image_number is not False:
+                self.add_images(chapter_content, soup)
+
             self.sanitize_content(chapter_content)
             chapter_title = self.get_chapter_title(soup)
             if self.extra_funcs:
                 for func in self.extra_funcs:
                     func(chapter_content)
+
             title_html = "<h1>"+chapter_title+"</h1>"
             chapter_content = chapter_content.renderContents()
             self.chapters[f"c{i}"] = epub.EpubHtml(
@@ -114,3 +118,21 @@ class EpubScrapper:
 
     def sanitize_content(self, soup):
         self.sanitizing_function(soup)
+
+    def add_images(self, chapter_content, soup):
+
+        for i in chapter_content.find_all('img'):
+            img = requests.get(i.get('src'), timeout=5).content
+            with open(f'epubimg_{self.image_number}.jpg', 'wb') as handler:
+                handler.write(img)
+            epub_img = epub.EpubImage(
+                uid=f'image_{self.image_number}',
+                file_name=f'epubimg_{self.image_number}.jpg',
+                media_type='image/jpg',
+                content=open(f'epubimg_{self.image_number}.jpg', 'rb').read()
+            )
+            new_tag = soup.new_tag('img', src=f'epubimg_{self.image_number}.jpg')
+            i.replace_with(new_tag)
+            self.book.add_item(epub_img)
+            os.remove(f'epubimg_{self.image_number}.jpg')
+            self.image_number += 1
