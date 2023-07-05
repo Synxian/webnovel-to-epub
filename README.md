@@ -1,3 +1,9 @@
+# About
+This is something I work on in my free time, it's only purpose it's to make things easier for me and whoever might want to
+get translated books/novels to an ereader.
+
+## Disclaimer
+This should not be used for books that are already licensed in your language, consider supporting the authors!
 # Class
 
 ## parameters
