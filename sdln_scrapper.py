@@ -2,6 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 from ebooklib import epub
 import re
+from constants import DEFAULT_STYLE
 #============================================variables=============================================#
 TITLE = 'I was said to be incompetent at home, but it seems that I was super-competent globally - volume 01' #book title
 chapter = 'https://sdslntranslations.blogspot.com/2020/04/chapterstory-1-thus-i-left-home-yet.html' #first chapter link # pylint:disable=invalid-name
@@ -16,6 +17,7 @@ def sanitize_content(content):
         i.decompose()
     for i in content.find_all('span'):
         i.decompose()
+    # import pdb; pdb.set_trace()
 
 def next_chapter(content):
     for i in content.find_all('a'):
@@ -34,11 +36,11 @@ for i in range(1,TOTAL_CHAPTERS):
 
     chapter_content = soup.find("div", class_=CONTENT_CLASS[0]).find("div", class_=CONTENT_CLASS[1]) #div where the reading content is at, if chapter title is included, remove the following lines # pylint:disable=line-too-long
     chapter = next_chapter(chapter_content) #function to find next chapter url
-    sanitize_content(chapter_content)
+    # sanitize_content(chapter_content)
     chapter_title = soup.title.string #function to find chapter title
     title_html = "<h1>"+chapter_title+"</h1>"
     chapter_content = chapter_content.renderContents()
-    chapters[f"c{i}"] = epub.EpubHtml(title=title_html, file_name=f'chap_{i}.xhtml', lang='hr')
+    chapters[f"c{i}"] = epub.EpubHtml(title=chapter_title, file_name=f'chap_{i}.xhtml', lang='hr')
     chapters[f"c{i}"].content = bytes(title_html, "utf-8")+chapter_content
 
     # add chapter
@@ -53,7 +55,7 @@ book.add_item(epub.EpubNcx())
 book.add_item(epub.EpubNav())
 
 # define CSS style
-style = 'BODY {color: white;}' # pylint:disable=invalid-name
+style = DEFAULT_STYLE # pylint:disable=invalid-name
 nav_css = epub.EpubItem(uid="style_nav", file_name="style/nav.css", media_type="text/css", content=style) # pylint:disable=line-too-long
 
 # add CSS file

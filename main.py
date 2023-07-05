@@ -4,8 +4,7 @@ from ebooklib import epub
 import re
 #============================================variables=============================================#
 TITLE = 'The girl who betrayed me reigns in the top caste at my high school - vol 06' #book title
-chapter = 'https://soafp.com/soafps/the-girl-who-betrayed-me/chapter-36-stagnation/' #first chapter link # pylint:disable=invalid-name
-STARTING_CHAP = 36
+chapter = 'https://soafp.com/soafps/the-girl-who-betrayed-me/chapter-36-stagnation/' #first chapter link
 TOTAL_CHAPTERS = 42
 FILE_TITLE = 'The girl who betrayed me - vol 06'+'.epub' #title of the resulting epub
 CONTENT_CLASS = ['entry-content'] #div where the reading content is at, if chapter title is included, remove the following lines # pylint:disable=line-too-long
