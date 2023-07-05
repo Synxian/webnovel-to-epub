@@ -9,7 +9,8 @@ class EpubScrapper:
     def __init__(self, title, starting_chapter_link, starting_chapter_number:int,
                   ending_chapter_number:int, file_name, content_class:list,
                   chapter_title_function, sanitizing_function, language=None, author:list=None,
-                  cover_link=None, style=DEFAULT_STYLE, add_images=False, extra_funcs:list=None):
+                  cover_link=None, style=DEFAULT_STYLE, add_images=False, extra_funcs:list=None,
+                  next_chapter_function=None):
         self.title = title
         self.starting_chapter_number = starting_chapter_number
         self.ending_chapter_number = ending_chapter_number
@@ -24,6 +25,7 @@ class EpubScrapper:
         self.sanitizing_function = sanitizing_function
         self.image_number = 1 if add_images else add_images
         self.extra_funcs = extra_funcs
+        self.next_chapter_function = next_chapter_function
         self.book = epub.EpubBook()
 
         self.initialize_epub()
@@ -78,7 +80,7 @@ class EpubScrapper:
             response = requests.get(chapter, timeout=5)
             soup = BeautifulSoup(response.content, "html.parser")
             chapter_content = self.get_chapter_content(soup)
-            next_chapter = self.next_chapter(chapter_content)
+            next_chapter = self.next_chapter_function(soup)
             if self.image_number is not False:
                 self.add_images(chapter_content, soup)
 
@@ -110,11 +112,6 @@ class EpubScrapper:
 
     def get_chapter_title(self, soup):
         return self.chapter_title_function(soup)
-
-    def next_chapter(self, content):
-        for i in content.find_all('a'):
-            if re.search(r'(next|Next)', i.get_text()):
-                return i['href']
 
     def sanitize_content(self, soup):
         self.sanitizing_function(soup)
