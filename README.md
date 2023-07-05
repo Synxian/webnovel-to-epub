@@ -22,6 +22,5 @@ For more information about language parameter refer to: http://www.ietf.org/rfc/
 
 # Usage
 
-You'll have to inspect the page to find the html tags, the rest is pretty straight forward, just definde the sanitize and get title functions and start passing the parametters, main.py is an interactive environment to fill parameters, though you still need to define the functions before executing it.
+You'll have to inspect the page to find the html tags, the rest is pretty straight forward, just define sanitize, get_title and next_chapter_function.
 In the examples folder you'll find some ready-to-use scrappers for a few famous pages
-if the tag for the next chapter button isn't 'a', modify the next chapter function in epub_scrapper
