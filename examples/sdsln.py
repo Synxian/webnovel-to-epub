@@ -1,3 +1,4 @@
+import re
 import sys
 sys.path.append('..')
 
@@ -15,6 +16,11 @@ def sanitize_content(content):
 def chapter_title(soup):
     return soup.title.string
 
+def next_chapter(content):
+    for i in content.find_all('a'):
+        if re.search(r'(next|Next)', i.get_text()):
+            return i['href']
+
 args = {
     'title': 'some title',
     'starting_chapter_link': 'link',
@@ -25,6 +31,7 @@ args = {
     'chapter_title_function': chapter_title,
     'sanitizing_function': sanitize_content,
     'language': 'en',
+    'next_chapter_function': next_chapter
 }
 
 EpubScrapper(**args)

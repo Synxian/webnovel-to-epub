@@ -1,4 +1,5 @@
 import sys
+import re
 sys.path.append('..')
 
 from epub_scrapper import EpubScrapper #pylint: disable=c0413
@@ -16,23 +17,34 @@ def chapter_title(soup):
     return soup.title.string[soup.title.string.find('Chapter'):soup.title.string.find('CClaw')-3]
 
 def remove_discord(content):
-    if 'Join the discord server' in content.p.get_text():
-        content.p.decompose()
+    for i in content.find_all('p'):
+        if re.search(r'(discord.gg|discord)', i.get_text(), re.IGNORECASE):
+            i.decompose()
+
+def remove_patreon(content):
+    for i in content.find_all('p'):
+        if re.search(r'(patreon)', i.get_text(), re.IGNORECASE):
+            i.decompose()
+
+
+def next_chapter(soup):
+    return soup.find("div", class_='nav-next').find('a', href=True)['href']
 
 
 args = {
     'title': 'some title',
     'starting_chapter_link': 'link',
-    'starting_chapter_number': 0,
-    'ending_chapter_number': 0,
+    'starting_chapter_number': 1,
+    'ending_chapter_number': 2,
     'file_name': 'some file name',
     'content_class': ['entry-content'],
     'chapter_title_function': chapter_title,
     'sanitizing_function': sanitize_content,
-    'language': 'en',
-    'add_images': 'Bool',
     'cover_link': 'link',
-    'extra_funcs': [remove_discord]
+    'language': 'en',
+    'add_images': True,
+    'extra_funcs': [remove_discord, remove_patreon],
+    'next_chapter_function': next_chapter
 }
 
 EpubScrapper(**args)
